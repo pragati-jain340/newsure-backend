@@ -2,14 +2,14 @@
 requests
 beautifulsoup4
 nltk
-sumy
+# sumy
 deep-translator
 langdetect
 sentencepiece
 
 # === Article extraction ===
 newspaper3k
-trafilatura
+# trafilatura
 
 # === AI & NLP Models ===
 transformers
@@ -19,8 +19,8 @@ torch
 google-generativeai
 
 # === OCR (optional, for image verification stage) ===
-paddleocr
-paddlepaddle
+# paddleocr
+# paddlepaddle  as it is heavy we can install it separately if needed for render 
 pillow
 
 # === NLP language model (for entity extraction etc.) ===

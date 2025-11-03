@@ -1,16 +1,14 @@
-from ..model_loader import get_summarizer_model, get_gemini_model
+from ..model_loader import get_gemini_model
 import nltk
 import google.generativeai as genai
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lex_rank import LexRankSummarizer
 from deep_translator import GoogleTranslator
 from langdetect import detect
-# from scrapping_content import extract_articlele
 
-local_summarizer = get_summarizer_model()
-gemini_model = get_gemini_model()  # ✅ Renamed to avoid variable shadowing
+gemini_model = get_gemini_model()  # ✅ Gemini only
 
+# ------------------------------------------------------------
+# 🌍 Language Handling
+# ------------------------------------------------------------
 def ensure_english(text):
     try:
         lang = detect(text)
@@ -19,8 +17,11 @@ def ensure_english(text):
         return text
     except Exception:
         return text
-    
 
+
+# ------------------------------------------------------------
+# 🧩 Claim Relevance Filter
+# ------------------------------------------------------------
 def filter_relevant_sentences(claim, text, top_k=5):
     if not text.strip():
         return ""
@@ -31,17 +32,10 @@ def filter_relevant_sentences(claim, text, top_k=5):
         relevant = sentences[:top_k]
     return " ".join(relevant)
 
-def summarize_local(text):
-    try:
-        if len(text.split()) > 900:
-            text = " ".join(text.split()[:900])
-        return local_summarizer(text, max_length=200, min_length=50, do_sample=False)[0]["summary_text"].strip()
-    except Exception:
-        parser = PlaintextParser.from_string(text, Tokenizer("english"))
-        s = LexRankSummarizer()
-        return " ".join(str(x) for x in s(parser.document, 3))
-    
 
+# ------------------------------------------------------------
+# 🤖 Gemini Summarization Only
+# ------------------------------------------------------------
 def summarize_with_gemini(claim: str, text: str) -> str:
     """
     Uses Gemini to create a claim-focused summary — summarizes only
@@ -88,20 +82,24 @@ def summarize_with_gemini(claim: str, text: str) -> str:
 
     except Exception as e:
         print(f"⚠️ Gemini summarization failed: {e}")
-        return summarize_local(text)
+        return "Summary could not be generated due to an error."
 
 
-
+# ------------------------------------------------------------
+# 📄 Summarize Single Article
+# ------------------------------------------------------------
 def summarize_article(claim, text):
     text = ensure_english(text)
     relevant_text = filter_relevant_sentences(claim, text, top_k=5)
     if not relevant_text.strip():
         return "No relevant content found to summarize."
     summary = summarize_with_gemini(claim, relevant_text)
-
     return summary
 
 
+# ------------------------------------------------------------
+# 📚 Summarize Multiple Articles
+# ------------------------------------------------------------
 def summarize_all_articles(claim, extracted_data):
     """
     Summarizes each extracted article separately.
@@ -117,25 +115,20 @@ def summarize_all_articles(claim, extracted_data):
         url = art.get("url")
         title = art.get("title", "Untitled")
         text = art.get("text", "")
-        # method = art.get("method", "unknown")
         credibility = art.get("credibility", 50)
         trust_label = art.get("trust_label", "Unknown")
         weight = art.get("weight", 0.5)
         similarity = art.get("similarity", 0.0)
-    
 
         if not text.strip():
             print(f"⚠️ Skipping empty article: {url}")
             continue
-
-        # print(f"[INFO] Summarizing: {title[:60]}... ({method})")
 
         summary_text = summarize_article(claim, text)
 
         summarized_articles.append({
             "url": url,
             "title": title,
-            # "method": method,
             "summary": summary_text,
             "length": len(text),
             "credibility": credibility,
@@ -152,9 +145,11 @@ def summarize_all_articles(claim, extracted_data):
         "summaries": summarized_articles
     }
 
-# summarisig multiple  article 
+
+# ------------------------------------------------------------
+# 🧪 Example Run
+# ------------------------------------------------------------
 if __name__ == "__main__":
-    # Example usage
     claim_example = "The Eiffel Tower is located in Berlin."
     extracted_example = {
         "articles": [
@@ -174,4 +169,4 @@ if __name__ == "__main__":
     }
     summary_results = summarize_all_articles(claim_example, extracted_example)
     for summary in summary_results["summaries"]:
-        print(f"URL: {summary['url']}\nSummary: {summary['summary']}\n")    
+        print(f"URL: {summary['url']}\nSummary: {summary['summary']}\n")

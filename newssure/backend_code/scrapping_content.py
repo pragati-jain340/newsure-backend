@@ -2,11 +2,9 @@ from ..model_loader import get_gemini_model
 import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
-import trafilatura
 import logging
 
 model = get_gemini_model()
-
 
 # ------------------------------------------------------------
 # ⚙️ Setup
@@ -30,17 +28,6 @@ def try_newspaper(url):
         if len(article.text.strip()) > 50:
             clean_text = " ".join(article.text.split())
             return article.title, clean_text, "newspaper3k"
-    except Exception:
-        pass
-    return None
-
-
-def try_trafilatura(url):
-    try:
-        text = trafilatura.extract(trafilatura.fetch_url(url))
-        if text and len(text.strip()) > 50:
-            clean_text = " ".join(text.split())
-            return "Extracted via Trafilatura", clean_text, "trafilatura"
     except Exception:
         pass
     return None
@@ -94,11 +81,11 @@ def extract_article(claim, articles):
         weight = art.get("weight", 0.5)
         similarity = art.get("similarity", 0.0)
 
-
         logging.info(f"📰 Extracting content from: {url}")
 
         extracted = None
-        for fn in (try_newspaper, try_trafilatura, extract_with_gemini):
+        # Removed try_trafilatura — now only tries newspaper and gemini
+        for fn in (try_newspaper, extract_with_gemini):
             result = fn(url)
             if result:
                 clean_text = " ".join(result[1].split())

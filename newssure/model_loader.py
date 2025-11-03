@@ -40,7 +40,7 @@ GEMINI_MODEL_NAME = "gemini-2.5-flash"
 _models = {
     "embedding": None,
     "classifier": None,
-    "summarizer": None,
+    # "summarizer": None,
     "gemini": None
 }
 
@@ -69,11 +69,11 @@ def get_classifier_model():
 # ------------------------------------------------------------
 # Local Summarizer (BART)
 # ------------------------------------------------------------
-def get_summarizer_model():
-    if _models["summarizer"] is None:
-        print("🔹 Loading BART summarization model")
-        _models["summarizer"] = pipeline("summarization", model="facebook/bart-large-cnn")
-    return _models["summarizer"]
+# def get_summarizer_model():
+#     if _models["summarizer"] is None:
+#         print("🔹 Loading BART summarization model")
+#         _models["summarizer"] = pipeline("summarization", model="facebook/bart-large-cnn")
+#     return _models["summarizer"]
 
 
 # ------------------------------------------------------------
@@ -93,6 +93,6 @@ def get_gemini_model():
 if __name__ == "__main__" or PRELOAD_MODELS:
     get_embedding_model()
     get_classifier_model()
-    get_summarizer_model()
+    # get_summarizer_model()
     get_gemini_model()
     print("✅ All models preloaded successfully.")

@@ -1,21 +1,38 @@
 import os
 import cv2
 import numpy as np
-from paddleocr import PaddleOCR
+
+# ------------------------------------------------------------
+# Safe import for PaddleOCR (skip if unavailable on Render)
+# ------------------------------------------------------------
+try:
+    from paddleocr import PaddleOCR
+    OCR_AVAILABLE = True
+except ImportError:
+    print("⚠️ PaddleOCR not available in this environment (Render). OCR will be skipped.")
+    OCR_AVAILABLE = False
+
 # ----------------------------
 # OCR Text Extraction
 
-ocr = PaddleOCR(
-    lang='en',
-    use_textline_orientation=False,
-    text_det_unclip_ratio=1.5,
-    text_recognition_batch_size=4,
-    textline_orientation_batch_size=1
-)
+if OCR_AVAILABLE:
+    ocr = PaddleOCR(
+        lang='en',
+        use_textline_orientation=False,
+        text_det_unclip_ratio=1.5,
+        text_recognition_batch_size=4,
+        textline_orientation_batch_size=1
+    )
+
 
 def run_ocr_extraction(image_path: str, visualize: bool = False) -> str:
     """Extract text from an image using PaddleOCR, compatible with all versions."""
     print("🚀 Initializing PaddleOCR...")
+
+    # 🧩 If PaddleOCR is unavailable (Render), skip OCR gracefully
+    if not OCR_AVAILABLE:
+        print("⚠️ PaddleOCR not found — skipping OCR and returning None.")
+        return None
 
     ocr = PaddleOCR(lang='en')
 
@@ -59,8 +76,6 @@ def run_ocr_extraction(image_path: str, visualize: bool = False) -> str:
     print(f"🧾 Extracted text: {extracted_text or '⚠️ No text detected.'}")
     return extracted_text
 
-
-    
 
 if __name__ == "__main__":
     test_image = r"C:\Users\praga\OneDrive\Desktop\news_dataset\NewsSure\Backend\app\assets\Screenshot 2025-10-12 212503.jpg"  # Replace with your test image path
