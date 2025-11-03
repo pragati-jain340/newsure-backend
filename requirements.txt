@@ -60,6 +60,7 @@ django
 djangorestframework
 django-cors-headers
 python-dotenv
+gunicorn
 
 # extra 
 sentence-transformers
