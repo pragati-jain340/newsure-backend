@@ -6,6 +6,8 @@ nltk
 deep-translator
 langdetect
 sentencepiece
+sentence-transformers
+
 
 # === Article extraction ===
 newspaper3k
@@ -26,34 +28,10 @@ pillow
 # === NLP language model (for entity extraction etc.) ===
 spacy
 en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
-# === Core dependencies ===
-requests
-beautifulsoup4
-nltk
-sumy
-deep-translator
-langdetect
-sentencepiece
-
-# === Article extraction ===
-newspaper3k
-trafilatura
-
-# === AI & NLP Models ===
-transformers
-torch
 
 # === Google Gemini API ===
 google-generativeai
 
-# === OCR (optional, for image verification stage) ===
-paddleocr
-paddlepaddle
-pillow
-
-# === NLP language model (for entity extraction etc.) ===
-spacy
-en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz
 
 # download django framework 
 django 
@@ -61,9 +39,6 @@ djangorestframework
 django-cors-headers
 python-dotenv
 gunicorn
-
-# extra 
-sentence-transformers
 
 
 # after all this run pip install -r requirements.txt
