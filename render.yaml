@@ -2,7 +2,7 @@ services:
   - type: web
     name: newsure-backend
     env: python
-    buildCommand: "pip install -r requirements.txt"
+    buildCommand: "pip install --no-cache-dir -r requirements.txt"
     startCommand: "gunicorn newssure.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
       - key: DEBUG
