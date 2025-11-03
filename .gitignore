@@ -1,0 +1,149 @@
+# =========================================================
+# 🔹 GLOBAL / COMMON IGNORE
+# =========================================================
+
+# OS / System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.*.local
+.envrc
+!.env.example  # ✅ Keep the example file visible
+
+# Temporary / cache folders
+tmp/
+temp/
+.cache/
+.parcel-cache/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Editor / IDE settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# =========================================================
+# 🔹 FRONTEND (React / Node.js)
+# =========================================================
+
+# Dependencies
+Frontend/node_modules/
+
+# Build outputs
+Frontend/dist/
+Frontend/build/
+Frontend/out/
+
+# Coverage / test outputs
+Frontend/coverage/
+Frontend/jest-cache/
+Frontend/jest-coverage/
+
+# Storybook
+Frontend/storybook-static/
+Frontend/.storybook-out/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# =========================================================
+# 🔹 BACKEND (Django / Python)
+# =========================================================
+
+# Django database & configs
+db.sqlite3
+local_settings.py
+
+# Static and media files
+media/
+staticfiles/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Test / coverage
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Build / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# =========================================================
+# 🔹 MODELS / MACHINE LEARNING FILES
+# =========================================================
+
+# Large model directories
+Backend/models/*
+models/*
+
+# Common ML model files
+*.pt
+*.bin
+*.h5
+*.pkl
+
+# Keep folder structure if needed
+!/Backend/models/.gitkeep
+!/models/.gitkeep
+
+# =========================================================
+# 🔹 MODEL / CACHE EXTENSIONS
+# =========================================================
+
+# Model caches
+~/.cache/
+.huggingface/
+transformers_cache/
+datasets/
+
+# =========================================================
+# 🔹 OPTIONAL / CUSTOM
+# =========================================================
+
+# Uncomment if you want to ignore Django migrations
+# */migrations/
+
+# Lockfiles (optional)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# =========================================================
+# ✅ End of file
+# =========================================================
