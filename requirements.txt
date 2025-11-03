@@ -8,7 +8,7 @@ langdetect
 sentencepiece
 sentence-transformers
 
-
+opencv-python
 # === Article extraction ===
 newspaper3k
 # trafilatura
