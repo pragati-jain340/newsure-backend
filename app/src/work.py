@@ -117,10 +117,6 @@ def verify_claim(request):
     summary_extract = extract_article(claim, articles=semantic_matches)
     print(f"[INFO] Extracted {summary_extract['total_articles']} full articles.")
 
-    # STAGE 7 – scrapping_content (Article Content Extraction)
-    summary_extract = extract_article(claim, articles=semantic_matches)
-    print(f"[INFO] Extracted {summary_extract['total_articles']} full articles.")
-
     # STAGE 8 – summarising_content (Creating Summary)
     summarized_articles = summarize_all_articles(claim, summary_extract)
 

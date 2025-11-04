@@ -16,6 +16,7 @@ lerna-debug.log*
 
 # Environment variables
 .env
+*.env
 .env.*.local
 .envrc
 !.env.example  # ✅ Keep the example file visible

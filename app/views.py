@@ -1,12 +1,28 @@
 from rest_framework.decorators import api_view, parser_classes
-from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
 from rest_framework.response import Response
-from app.src.work import verify_claim as vc
+import json
+from app.src.work import verify_claim as run_verification
 
 @api_view(['POST'])
-@parser_classes([JSONParser, MultiPartParser, FormParser])
+@parser_classes([JSONParser, FormParser, MultiPartParser])
 def verify_claim(request):
-    return vc(request)
+    try:
+        # Try to read data from DRF or fallback to raw body
+        data = request.data or json.loads(request.body.decode('utf-8'))
+        input_type = data.get('inputType')
+        input_text = data.get('input')
+
+        if not input_type or not input_text:
+            return Response({"error": "Missing required fields: inputType or input"}, status=400)
+
+        # Call your pipeline
+        result = run_verification(data)
+        return Response(result, status=200)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)
+
 
     # input_type = request.data.get('inputType')
     
