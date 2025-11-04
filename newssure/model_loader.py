@@ -1,32 +1,28 @@
 """
-Centralized model loading for TruthScope.
+Centralized model loading for NewsSure.
 Ensures heavy ML models (transformers, embeddings, etc.) are loaded only once.
+Optimized for Render deployment (low memory).
 """
 
-# pip install python-dotenv
-
-from sentence_transformers import SentenceTransformer
 import os
 from dotenv import load_dotenv
-
-# Go one directory up (from newssure → Backend)
-
+from sentence_transformers import SentenceTransformer
 from transformers import pipeline
 import google.generativeai as genai
-import os
 
 # ------------------------------------------------------------
-# Load .env environment variables
+# Load environment variables
 # ------------------------------------------------------------
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
 load_dotenv(dotenv_path)
 
-# Read from .env
+# Safely read environment variables
 GEMINI_API = os.getenv("GEMINI_API")
 PRELOAD_MODELS = os.getenv("PRELOAD_MODELS", "false").lower() == "true"
 
-
+# ------------------------------------------------------------
 # Configure Gemini API
+# ------------------------------------------------------------
 if GEMINI_API:
     genai.configure(api_key=GEMINI_API)
 else:
@@ -35,18 +31,16 @@ else:
 GEMINI_MODEL_NAME = "gemini-2.5-flash"
 
 # ------------------------------------------------------------
-# Singleton Cache
+# Singleton cache
 # ------------------------------------------------------------
 _models = {
     "embedding": None,
     "classifier": None,
-    # "summarizer": None,
     "gemini": None
 }
 
-
 # ------------------------------------------------------------
-# Embedding Model (SentenceTransformer)
+# Embedding model
 # ------------------------------------------------------------
 def get_embedding_model(model_name="intfloat/multilingual-e5-small", model_dir="models"):
     if _models["embedding"] is None:
@@ -55,9 +49,8 @@ def get_embedding_model(model_name="intfloat/multilingual-e5-small", model_dir="
         _models["embedding"] = SentenceTransformer(model_path if os.path.exists(model_path) else model_name)
     return _models["embedding"]
 
-
 # ------------------------------------------------------------
-# Text Classifier (RoBERTa MNLI)
+# Text classifier (RoBERTa MNLI)
 # ------------------------------------------------------------
 def get_classifier_model():
     if _models["classifier"] is None:
@@ -65,19 +58,8 @@ def get_classifier_model():
         _models["classifier"] = pipeline("text-classification", model="roberta-large-mnli")
     return _models["classifier"]
 
-
 # ------------------------------------------------------------
-# Local Summarizer (BART)
-# ------------------------------------------------------------
-# def get_summarizer_model():
-#     if _models["summarizer"] is None:
-#         print("🔹 Loading BART summarization model")
-#         _models["summarizer"] = pipeline("summarization", model="facebook/bart-large-cnn")
-#     return _models["summarizer"]
-
-
-# ------------------------------------------------------------
-# Gemini Model (Google Generative AI)
+# Gemini model
 # ------------------------------------------------------------
 def get_gemini_model():
     if _models["gemini"] is None:
@@ -86,13 +68,16 @@ def get_gemini_model():
         _models["gemini"] = genai.GenerativeModel(GEMINI_MODEL_NAME)
     return _models["gemini"]
 
+# ------------------------------------------------------------
+# Auto-preload all models (optional, safe for Render)
+# ------------------------------------------------------------
+RUNNING_IN_RENDER = os.getenv("RENDER") == "true"
 
-# ------------------------------------------------------------
-# Auto-preload all models (optional)
-# ------------------------------------------------------------
-if __name__ == "__main__" or PRELOAD_MODELS:
+if PRELOAD_MODELS and not RUNNING_IN_RENDER:
+    print("🚀 Preloading all models (standalone/local mode)...")
     get_embedding_model()
     get_classifier_model()
-    # get_summarizer_model()
     get_gemini_model()
     print("✅ All models preloaded successfully.")
+else:
+    print("⚙️ Running on Render or preload disabled — models will load lazily when needed.")
