@@ -4,7 +4,13 @@ import re
 import json
 
 SERP_API_KEY = "ea89ee70c31f83aade9cf6d1bfb04cff3f2046976e8cc323515719f801a91ae8"
-nlp = spacy.load("en_core_web_sm")
+
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    print("⚠️ spaCy model 'en_core_web_sm' not found — using blank English pipeline instead.")
+    nlp = spacy.blank("en")
+
 
 def finding_related_article(claim):
     """Fetch top 10 related articles from SERP API using the full claim text."""
