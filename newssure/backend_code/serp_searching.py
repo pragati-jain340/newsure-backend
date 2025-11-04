@@ -5,18 +5,27 @@ import json
 
 SERP_API_KEY = "ea89ee70c31f83aade9cf6d1bfb04cff3f2046976e8cc323515719f801a91ae8"
 
-try:
-    nlp = spacy.load("en_core_web_sm")
-except OSError:
-    print("⚠️ spaCy model 'en_core_web_sm' not found — using blank English pipeline instead.")
-    nlp = spacy.blank("en")
+_nlp = None  # global cached model
+
+
+def get_nlp():
+    """Lazy-load spaCy NLP model (safe for low-memory environments like Render)."""
+    global _nlp
+    if _nlp is None:
+        try:
+            print("🔹 Loading spaCy model: en_core_web_sm ...")
+            _nlp = spacy.load("en_core_web_sm")
+        except Exception as e:
+            print(f"⚠️ spaCy model load failed ({e}) — using blank English model.")
+            _nlp = spacy.blank("en")
+    return _nlp
 
 
 def finding_related_article(claim):
     """Fetch top 10 related articles from SERP API using the full claim text."""
     
     def extract_keywords(text):
-        doc = nlp(text)
+        doc = get_nlp()(text)
         important_labels = {"PERSON", "ORG", "GPE", "MONEY", "PERCENT", "QUANTITY", "CARDINAL", "DATE"}
         
         # Extract entities and key words
